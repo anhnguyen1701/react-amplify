@@ -63,9 +63,9 @@ function App() {
     await Auth.signIn({ username, password }).then(async (res) => {
       const { jwtToken } = res.signInUserSession.accessToken;
 
-      axios.fetch({
-        url: 'https://lyjun0kpd0.execute-api.us-east-2.amazonaws.com/dev/api/login',
+      axios({
         method: 'post',
+        url: 'https://lyjun0kpd0.execute-api.us-east-2.amazonaws.com/dev/api/login',
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
