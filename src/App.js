@@ -1,5 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import { Auth, Hub } from 'aws-amplify';
 
@@ -59,7 +60,17 @@ function App() {
 
   async function signIn() {
     const { username, password } = formState;
-    await Auth.signIn({ username, password });
+    await Auth.signIn({ username, password }).then(async (res) => {
+      const { jwtToken } = res.signInUserSession.accessToken;
+
+      axios.fetch({
+        url: 'https://lyjun0kpd0.execute-api.us-east-2.amazonaws.com/dev/api/login',
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+    });
     updateFormState(() => ({ ...formState, formType: 'signedIn' }));
   }
 
