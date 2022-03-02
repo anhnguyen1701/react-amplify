@@ -63,7 +63,7 @@ function App() {
     const { username, password } = formState;
     await Auth.signIn({ username, password }).then(async (res) => {
       const { jwtToken } = res.signInUserSession.accessToken;
-
+      console.log(jwtToken);
       axios({
         method: 'post',
         url: 'https://ki3281btyl.execute-api.us-east-2.amazonaws.com/prod/api/login',
@@ -112,7 +112,7 @@ function App() {
         {formType === 'signIn' && (
           <div>
             <input name="username" onChange={onChange} placeholder="username"></input>
-            <input name="password" type="password" onChange={onChange} placeholder="password"></input>
+            <input name="password" type="text" onChange={onChange} placeholder="password"></input>
             <button onClick={signIn}>Sign In</button>
           </div>
         )}
