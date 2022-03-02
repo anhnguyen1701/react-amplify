@@ -26,7 +26,8 @@ function App() {
   async function checkUser() {
     try {
       const user = await Auth.currentAuthenticatedUser();
-      console.log('user: ', user);
+      const { jwtToken } = user.signInUserSession.accessToken;
+      console.log(jwtToken);
       updateUser(user);
       updateFormState(() => ({ ...formState, formType: 'signedIn' }));
     } catch (error) {
@@ -65,7 +66,7 @@ function App() {
 
       axios({
         method: 'post',
-        url: 'https://lyjun0kpd0.execute-api.us-east-2.amazonaws.com/dev/api/login',
+        url: 'https://ki3281btyl.execute-api.us-east-2.amazonaws.com/prod/api/login',
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
