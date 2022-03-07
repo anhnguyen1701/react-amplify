@@ -47,7 +47,7 @@ function App() {
 
   async function signUp() {
     const { username, email, password } = formState;
-    await Auth.signUp({ username, password, attributes: { email } });
+    await Auth.signUp({ username, password, attributes: { email , birthdate: "11/11/2000"} });
     updateFormState(() => ({
       ...formState,
       formType: 'confirmSignUp',
