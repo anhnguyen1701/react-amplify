@@ -15,6 +15,9 @@ const inititalFormState = {
 function App() {
   const [formState, updateFormState] = useState(inititalFormState);
   const [user, updateUser] = useState('');
+  const [token, setToken] = useState('');
+  const [file, setFile] = useState('');
+  const [uploadURL, setUploadURL] = useState('');
 
   useEffect(() => {
     checkUser();
@@ -28,6 +31,7 @@ function App() {
       const user = await Auth.currentAuthenticatedUser();
       const { jwtToken } = user.signInUserSession.accessToken;
       console.log(jwtToken);
+      setToken(jwtToken);
       updateUser(user);
       updateFormState(() => ({ ...formState, formType: 'signedIn' }));
     } catch (error) {
@@ -47,7 +51,7 @@ function App() {
 
   async function signUp() {
     const { username, email, password } = formState;
-    await Auth.signUp({ username, password, attributes: { email , birthdate: "11/11/2000"} });
+    await Auth.signUp({ username, password, attributes: { email, birthdate: '11/11/2000' } });
     updateFormState(() => ({
       ...formState,
       formType: 'confirmSignUp',
@@ -64,13 +68,6 @@ function App() {
     await Auth.signIn({ username, password }).then(async (res) => {
       const { jwtToken } = res.signInUserSession.accessToken;
       console.log(jwtToken);
-      axios({
-        method: 'post',
-        url: 'https://ki3281btyl.execute-api.us-east-2.amazonaws.com/prod/api/login',
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
     });
     updateFormState(() => ({ ...formState, formType: 'signedIn' }));
   }
@@ -78,6 +75,34 @@ function App() {
   async function signOut() {
     await Auth.signOut();
     window.location.reload();
+  }
+
+  async function handleOnClick() {
+    await axios({
+      method: 'get',
+      url: 'https://2934nh2fzg.execute-api.us-east-2.amazonaws.com/prod/api/upload/media',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        const data = res.data.presigned_upload_url;
+
+        axios({
+          method: 'put',
+          url: data,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+            'Content-Type': file.type,
+          },
+          body: file,
+        }).then((res) => {
+          console.log(res);
+        });
+      })
+      .catch(console.log);
   }
 
   return (
@@ -121,6 +146,15 @@ function App() {
           <div>
             <h1>Hello user</h1>
             <button onClick={signOut}>Sign Out</button>
+
+            <div style={{ textAlign: 'center' }}>
+              <h3>image</h3>
+              <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+
+              <div style={{ marginTop: '10px' }}>
+                <button onClick={handleOnClick}>submit</button>
+              </div>
+            </div>
           </div>
         )}
       </div>
