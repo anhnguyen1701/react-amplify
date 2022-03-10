@@ -87,22 +87,23 @@ function App() {
     })
       .then((res) => {
         const data = res.data.presigned_upload_url;
-
-        axios({
-          method: 'put',
-          url: data,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-            'Content-Type': file.type,
-          },
-          body: file,
-        }).then((res) => {
-          console.log(res);
-        });
+        putObject(data);
       })
       .catch(console.log);
+  }
+
+  async function putObject(data) {
+    const response = await fetch(data, {
+      method: 'put',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Content-Type': file.type,
+      },
+      body: file,
+    });
+    console.log(response);
   }
 
   return (
